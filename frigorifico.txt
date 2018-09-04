@@ -1,0 +1,15 @@
+
+minimize 23Y1d + 12Y2d + 17Y1e + 26Y2e + 21Y1f + 15Y2f + 27Xb1 + 33Xc1 + 35Xa1 + 26Xc2 + 30Xa2 + 23Xb2;
+
+Xa1 + Xa2 <= 750;
+Xb1 + Xb2 <= 980;
+Xc1 + Xc2 <= 670;
+Xa1 + Xb1 + Xc1 <= 1500;
+Xa2 + Xb2 + Xc2 <= 1000;
+Y1d + Y2d = 650;
+Y1e + Y2e = 900;
+Y1f + Y2f = 650;
+Xa1 + Xb1 + Xc1 - Y1d - Y1e - Y1f = 0;
+Xa2 + Xb2 + Xc2 - Y2d - Y2e - Y2f = 0;
+
+
