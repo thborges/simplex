@@ -6,6 +6,7 @@
 #include "simplex.h"
 
 #define KNRM  "\x1B[0m"
+#define KBLD  "\x1B[1m"
 #define KRED  "\x1B[31m"
 #define KGRN  "\x1B[32m"
 #define KYEL  "\x1B[33m"
@@ -13,27 +14,29 @@
 #define KMAG  "\x1B[35m"
 #define KCYN  "\x1B[36m"
 #define KWHT  "\x1B[37m"
+#define KINV  "\e[7m"
 
 void printtableaux(int rows, int cols, 
 	vname namerows[rows], cname namecols[cols],
 	double tableaux[rows][cols],
 	int enter_col, int leave_row, int first_phase) {
 
-	printf("           |");
+	printf(KBLD KNRM KINV"           |");
 	for(int c = 0; c < cols; c++) {
 		if (!first_phase && namecols[c].aux)
 			continue;
 
-		if (c == enter_col) printf(KMAG);
+		if (c == enter_col) printf(KBLD KMAG);
+		else printf(KBLD KNRM KINV);
 		printf("%10s |", namecols[c].name);
-		if (c == enter_col) printf(KNRM);
 	}
 	printf("\n");
 
 	for(int r = 0; r < rows; r++) {
-		if (r == leave_row) printf(KRED);
+		if (r == leave_row) printf(KBLD KMAG KINV);
+		else printf(KBLD KNRM KINV);
 		printf("%10s |", namerows[r].name);
-		if (r == leave_row) printf(KNRM);
+		printf(KNRM);
 
 		for(int c = 0; c < cols; c++) {
 			if (!first_phase && namecols[c].aux)
@@ -93,9 +96,9 @@ void simplex(char maxmin, int rows, int cols,
 
 		if (enter_col == -1) {
 			printtableaux(rows, cols, namerows, namecols, tableaux, cols, rows, first_phase);
-			printf("\nOptimal solution found: %f \n", tableaux[obj_row][cols-1]);
+			printf("\nOptimal solution found: %15.4f \n", tableaux[obj_row][cols-1]);
 			for(int r = 1; r < rows; r++)
-				printf("\t %s: %f\n", namerows[r].name, tableaux[r][cols-1]);
+				printf("\t %13s: %15.4f\n", namerows[r].name, tableaux[r][cols-1]);
 			break;
 		}
 		

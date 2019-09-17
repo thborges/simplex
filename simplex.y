@@ -84,12 +84,14 @@ objetivo : TOK_MAX linear_expr ';'
 			{ maxmin = '>';
 			  copy_to_row(0, -1);
 			  namerows[0].name = "z";
+			  printf("Maximize\n");
 			}
 
 		 | TOK_MIN linear_expr ';'   
 			{ maxmin = '<';
 			  copy_to_row(0, -1);
 			  namerows[0].name = "z";
+			  printf("Minimize\n");
 			}
 		 ;
 
@@ -165,18 +167,19 @@ int yyerror(const char *s) {
 void count_vars_and_constraints() {
 	char str[100];
 
-	// ignore whitespace on the begining
+	// ignore whitespace in the begining
 	int spaces = 0;
 	str[1] = 0;
 	while(fscanf(yyin, "%c", &str[0]) != EOF) {
-		if (!isspace(str[0]))
-			break;
-		else
+		if (isspace(str[0]))
 			spaces++;
+		else
+			break;
 	}
-	fseek(yyin, spaces-1, SEEK_SET);
+	fseek(yyin, spaces, SEEK_SET);
 
 	while(fscanf(yyin, "%[^;\r\n\t+. -]", str) != EOF) {
+		//printf("Detected word is %s\n", str);
 
 		if (vars_seen_size <= actualvar+2) {
 			vars_seen_size = MAX(10, vars_seen_size * 2);
@@ -217,9 +220,6 @@ void count_vars_and_constraints() {
 				str2++;
 
 			if (strlen(str2) > 0) { // only digits
-
-				//printf("Var is %s.\n", str2);
-
 				// TODO: a hash would be better.
 				int seen = 0;
 				for(int i = 0; i < actualvar; i++) {
@@ -238,7 +238,7 @@ void count_vars_and_constraints() {
 		while (fscanf(yyin, "%[;\r\n\t+. -]", str) >= 1);
 	}
 
-	printf("Model has %d constraints and %d variables, %d auxiliary.\n", constraints_qtd, vars_qtd, aux_qtd);
+	printf("Model has %d constraints and %d variables, %d auxiliary.\nVars: ", constraints_qtd, vars_qtd, aux_qtd);
 	for(int i = 0; i < actualvar; i++)
 		printf("%s ", vars_seen[i]);
 	printf("\n");
@@ -306,7 +306,7 @@ int main(int argc, char *argv[]) {
 
 	}
 	else
-		simplex(maxmin, rows, cols, namerows, namecols, tableaux, 0, 1);
+		simplex(maxmin, rows, cols, namerows, namecols, tableaux, 0, 0);
 
 	for(int i = 0; i < actualvar; i++)
 		free(vars_seen[i]);
