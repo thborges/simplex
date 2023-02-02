@@ -3,6 +3,7 @@
 #include <float.h>
 #include <assert.h>
 #include <string.h>
+#include <stdbool.h>
 #include "simplex.h"
 
 #define KNRM  "\x1B[0m"
@@ -21,32 +22,40 @@ void printtableaux(int rows, int cols,
 	double tableaux[rows][cols],
 	int enter_col, int leave_row, int first_phase) {
 
-	printf(KBLD KNRM KINV"           |");
+	printf(KBLD KNRM KINV"       |");
 	for(int c = 0; c < cols; c++) {
 		if (!first_phase && namecols[c].aux)
 			continue;
 
 		if (c == enter_col) printf(KBLD KMAG);
 		else printf(KBLD KNRM KINV);
-		printf("%10s |", namecols[c].name);
+		printf("%6s |", namecols[c].name);
 	}
 	printf("\n");
 
 	for(int r = 0; r < rows; r++) {
-		if (r == leave_row) printf(KBLD KMAG KINV);
-		else printf(KBLD KNRM KINV);
-		printf("%10s |", namerows[r].name);
-		printf(KNRM);
+		bool opt_row = (first_phase && r == rows-1) ||  // r
+					   (!first_phase && r == 0); // z
+
+		if (r == leave_row)
+			printf(KBLD KMAG KINV);
+		else if (opt_row)
+			printf(KBLD KCYN KINV);
+		else
+			printf(KBLD KNRM KINV);
+		printf("%6s |", namerows[r].name);
+		if (!opt_row)
+			printf(KNRM);
 
 		for(int c = 0; c < cols; c++) {
 			if (!first_phase && namecols[c].aux)
 				continue;
-			printf("%10.2f |", tableaux[r][c]);
+			printf("%6.2f |", tableaux[r][c]);
 		}
 		printf("\n");
 	}
 
-	printf("\n");
+	printf(KNRM "\n");
 }
 
 void simplex(char maxmin, int rows, int cols, 

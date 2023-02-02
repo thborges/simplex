@@ -20,6 +20,7 @@ char *str_remove_space(char *text) {
 
 %%
 
+"#".*$     { }
 "maximize" { return TOK_MAX; }
 "minimize" { return TOK_MIN; }
 ">="       { return TOK_GE; }
